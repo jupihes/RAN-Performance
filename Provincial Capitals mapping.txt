@@ -1,4 +1,4 @@
-﻿Province             	City	Latitude	Longitude	Province ABB	Province ABB2	ostanId	ostanName
+﻿Province	City	Latitude	Longitude	Province ABB	Province ABB2	ostanId	ostanName
 GOLESTAN	GORGAN	36.841644	54.432922	GOLESTAN	GOL	127	گلستان
 MAZANDARAN	SARI	36.471546	52.355087	MAZANDARAN	MAZ	102	مازندران
 ARDEBIL	ARDEBIL	38.2537	48.3	ARDEBIL	ARD	124	اردبيل
