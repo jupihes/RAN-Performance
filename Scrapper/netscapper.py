@@ -59,7 +59,7 @@ ServCatFa2En = pd.DataFrame(data)
 ServCatFa2En = ServCatFa2En.T
 ServCatFa2En.columns = ['Eng Cat', 'Category', 'Category id']
 
-Provincename = pd.read_csv('Provincial%20Capitals%20mapping.txt',sep='\t')
+Provincename = pd.read_csv(r'Provincial%20Capitals%20mapping.txt',sep='\t')
 dfAllProvinces.loc[dfAllProvinces.operatorName =='شركت خدمات ارتباطي ايرانسل', 'Opt Eng'] = 'MTN' 
 dfAllProvinces.loc[dfAllProvinces.operatorName =='شركت مخابرات ايران - همراه اول', 'Opt Eng'] = 'MCI' 
 dfAllProvinces.loc[dfAllProvinces.operatorName =='شركت خدمات ارتباطي رايتل', 'Opt Eng'] = 'RighTel' 
