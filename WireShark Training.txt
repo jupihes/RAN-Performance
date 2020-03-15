@@ -1,0 +1,127 @@
+-- Wireshark : How to use filters training
+-- April 2018
+
+(http and tcp and ip and eth and frame) && (kerberos and tcp and ip and eth and frame)
+ip.addr==10.133.13.255 && ip.addr==10.133.91.26
+ip.src==10.133.13.255 && ip.dst==10.133.91.26
+gsm_a.gm.sm.qos.traffic_cls == 4
+nas_eps.emm.cause == 2
+
+dns.msftncsi.com
+
+https://wiki.wireshark.org/GsmProtocolFamily?action=show&redirect=GSM
+
+https://wiki.wireshark.org/ProtocolReference
+
+https://wiki.wireshark.org/SampleCaptures#UMTS 
+
+https://wiki.wireshark.org/SampleCaptures?action=AttachFile&do=view&target=3gpp_mc.cap
+
+https://wiki.wireshark.org/PDCP-LTE
+
+tool installation
+review tool part + menus
+
+
+where to start
+	samples
+		2G QOS sample --> review at end
+		
+			D:\MTN\Ericsson\2G\Feature trial\QoS
+		3G:
+		
+		LTE samples:
+			http://www.ng4t.com/wireshark.html -->	D:\MTN\Work at MTN\LTE\sample wireshark
+
+filter sample
+HTTP
+	check browing time
+		http://www.thevisiblenetwork.com/2015/01/21/calculate-http-response-time-in-wireshark/
+		add column
+			find filter http.time
+	source or destination IP filter 
+		ip.dst == 93.184.220.29
+		(ip.src == 10.133.6.168) && (ip.dst == 10.131.58.169)
+		
+	port filtering
+		http 80
+		SIP port = 5060
+	socket filtering 
+		tcp.dstport == 80 && ip.dst == 93.184.220.29
+		
+		tcp
+		https://wiki.wireshark.org/Transmission_Control_Protocol?action=show&redirect=TCP
+		https://www.wireshark.org/docs/dfref/t/tcp.html
+	
+		tcp[tcpflags] & (tcp-syn|tcp-fin) != 0 ?
+		
+		
+		
+		tcp.srcport gt 58000 
+		tcp.stream eq 115 ==
+		
+		((http) && ) && (http.response.code == 200)
+		https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+		
+		http 
+		https://wiki.wireshark.org/Hyper_Text_Transfer_Protocol 
+		http.response.code
+		
+		!(http.request.method == "GET")
+		http.accept
+		
+		(http) or (http2)
+		http.host contains "varzesh3"
+		
+		
+		tcp.analysis.retransmission
+		
+		tcp.analysis.zero_window
+		tct retransmission
+			http://www.thevisiblenetwork.com/2015/02/04/graphing-packet-retransmission-rates-with-wireshark/
+		
+		tcp contains "google"
+			then filter with IP.dst like ip.dst == 216.58.213.228
+			tcp stream graph
+			
+			
+		dns.cname
+		dns.qry.name == "www.google.com"
+		
+		dns.qry.name contains "kaggle"
+			check IP of kaggle
+		dns.qry.name contains "spotify"
+		netflix
+		
+		
+		graph filter
+			ip.src ==    DL/UL 
+			ip.ds ==
+			
+		
+		
+			port unreachable  icmp.code == 3
+				icmp == 0 what does it mean?  
+				
+				https://www.ibm.com/support/knowledgecenter/en/SS42VS_7.3.1/com.ibm.qradar.doc/c_DefAppCfg_guide_ICMP_intro.html
+				ping
+			icmp.type == 3
+		
+		
+		dns.flags.response == 0 for DNS queries
+		dns.flags.response == 1 for DNS response
+		dns.qry.name == "URL Name"
+		dns.flags.rcode <4
+	
+		
+		http.request.full_uri ?
+		http.request.uri.query ?
+		
+
+		
+		
+https://www-net.cs.umass.edu/wireshark-labs/
+http://www-net.cs.umass.edu/kurose-ross-ppt-7e/
+
+D:\MTN\Work at MTN\Documnets\Networking\7 edition\Wireshark Labs
+"F:\Multimedia Training Accessories\Troubleshooting with Wireshark.mp4"
