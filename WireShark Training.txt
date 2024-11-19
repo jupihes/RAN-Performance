@@ -125,3 +125,212 @@ http://www-net.cs.umass.edu/kurose-ross-ppt-7e/
 
 D:\MTN\Work at MTN\Documnets\Networking\7 edition\Wireshark Labs
 "F:\Multimedia Training Accessories\Troubleshooting with Wireshark.mp4"
+
+
+
+
+### 
+
+Amir note on PCAP file processing
+
+
+Analyze huge PCAP is always problematic ,so we need to reduce size of PCAP files for better analysis with help of below tools 
+I think below methods can be useful for all of us so I shared that over this mail 
+I used below methods on PCAP files bigger than 2GB(kindly be note from my side best app in below methods is a last one (split cap) faster and sharper than others )
+
+Before start we can find details inside of Packets with below app in wire shark directory
+      
+C:\Program Files\Wireshark\capinfos.exe your_file.pcap 
+
+Then we can use extracted information for below apps 
+
+•	Tcpdump in linux and windump on windows
+         
+               We can split PCAP based on packet number
+
+              saving the first 21038 frames to a new file
+
+                         tcpdump -r bigfile.pcap -c 21038 -w bigfile_first21038 frames.pcap 
+
+
+               we can separate all packets which are using TCP protocol and port number 55777
+
+                       tcpdump -r bigfile.pcap -w session.pcap -s0 tcp and port 55777
+
+
+
+we can split files with below command which create a rotating buffer of 5 files (-W 5) and tcpdump switches to another file once the current file reaches 10,000,000 bytes, about 10MB (-C works in units of 1,000,000 bytes, so -C 10 = 10,000,000 bytes). The prefix of the files will be capfile (-w capfile), and a one-digit integer will be appended to each
+
+                      tcpdump -W 5 -C 10 -w capfile
+
+
+  
+•	Tshark.exe
+         
+
+              TShark can  execute from below directory on CMD environment 
+
+ 
+
+             We can find statistic of PCAP with below commands 
+
+         tshark -r capture.pcapng -q -z ip_hosts,tree
+         tshark -r capture.pcapng -q -z ptype,tree
+
+
+
+
+
+            
+
+             
+
+
+                We can split PCAP with below methods on Tshark
+
+•	Based on time 
+                             find the first package that is at least 10 minutes in the capture file
+                             tshark -r bigfile.pcap -Y "frame.time_relative <= 600.0
+
+              
+
+•	Based on source and destination or port 
+
+                              tshark -r interesting-packets.pcap -w interesting-host.pcap ip.dst==192.168.1.10 and udp.dstport==53 
+
+
+
+•	Editcap.exe
+
+              Can execute from below directory on CMD environment 
+              C:\Program Files\Wireshark\editcap.exe
+
+
+•	Split based on time 
+                For example to extract 30 minutes of data from 6th June 2014, from 12:00 use:
+                C:\Program Files\Wireshark\editcap.exe -A "2014-06-01 12:00:00" -B "2014-06-01 12:30:00" fullsetofdata.pcap reduceddata.pcap
+
+
+•	Split based on duration 
+               First 10 min for example (600 S)
+               editcap -F pcap -i 600 bigfile.pcap bigfile_split10min.pcap
+
+
+•	Split PCAP Based on packet number 
+
+              The output_dump file will contain all packets except the first 10 packets.
+              editcap -v input_dump output_dump 1-10
+
+               The output_dump file will contain all packets except packets from 200 to 210.
+               editcap -v input_dump output_dump 200-210
+
+               The output_dump file will contain first 10 packets and packets from 100 and 200
+               editcap -r  -v input_dump output_dump 1-10  100-200
+
+               it gives the dump which does not contain duplication
+               editcap -v -d input_dump output_dump
+
+               Divide the single dump into multiple file and each contains specified number of packets
+               editcap -v -c 1000 input_dump output
+               If the input_dump contains 5000 packets, editcap will generate 5 different output files.
+
+
+•	Splitcap.exe 
+               Last method with fast structure (recommended Method )
+               This file should be download from below site  (attached to this mail) 
+                https://www.netresec.com/?page=SplitCap
+
+                SplitCap is written in C# using the .NET framework 2.0. Make sure you have that installed before running SplitCap
+                Split frames in a PCAP file based on flow, host, hostpair 
+                 For example 
+                 SplitCap.exe -r huge.pcap -s host
+
+Result will display like below 
+huge.pcap.Host_128-183-104-74.pcap
+huge.pcap.Host_129-33-21-40.pcap
+huge.pcap.Host_129-70-4-55.pcap
+huge.pcap.Host_129-82-103-72.pcap
+huge.pcap.Host_130-212-20-225.pcap
+huge.pcap.Host_130-212-255-255.pcap
+huge.pcap.Host_131-107-39-4.pcap
+huge.pcap.Host_131-107-8-43.pcap
+huge.pcap.Host_216-109-126-56.pcap
+huge.pcap.Host_64-236-24-4.pcap
+huge.pcap.Host_80-67-66-6.pcap
+huge.pcap.Host_fe80--202-2dff-fe38-85c0.pcap
+huge.pcap.Host_ff02--2.pcap
+
+                  SplitCap.exe -r huge.pcap -s session
+
+huge.pcap.TCP_128-183-104-74_80_192-168-21-249_32788.pcap
+huge.pcap.TCP_128-183-104-74_80_192-168-21-249_32789.pcap
+huge.pcap.TCP_80-67-66-6_80_192-168-22-22_49208.pcap
+huge.pcap.TCP_80-67-66-6_80_192-168-22-22_49209.pcap
+huge.pcap.UDP_130-212-20-225_1038_239-255-255-250_1900.pcap
+huge.pcap.UDP_130-212-20-225_137_130-212-255-255_137.pcap
+huge.pcap.UDP_130-212-20-225_138_130-212-255-255_138.pcap
+
+•	Filter PCAP file on IP address
+                 SplitCap.exe -r huge.pcap -ip 128.183.104.74 -s nosplit
+
+The -s nosplit argument is used to tell SplitCap not to split the pcap into one file per session. The generated file "huge.pcap.NoSplit.pcap" will only contain frames going to or from the IP address 128.183.104.74.You can also specify multiple IP addresses if you are interested in traffic to/from more than one IP address:
+
+                 SplitCap.exe -r huge.pcap -ip 128.183.104.74 -ip 80.67.66.6 -s nosplit
+
+                Filter PCAP file on port number
+                 SplitCap.exe -r huge.pcap -port 53 -port 80 -s nosplit
+
+                 Extract application layer (L7) contents
+                 A pretty cool thing with SplitCap is the ability to extract application (i.e. layer 7) data from a pcap file with the -y L7 argument. I'll use the file
+
+                  SplitCap.exe -r dump.eth0.1059726000.pcap -s session -port 25 -y L7
+                
+   This command creates 10 files with a ".bin" file extention in the output directory. Each such bin file contains the application layer data for both directions (server->client and vice versa) from an SMTP session .          One of the generated SMTP session files is called "dump.eth0.1059726000.pcap.TCP_64-48-248-30_25_192-168-17-79_33443.bin" and looks something like this
+
+220 smtp102.mail.sc5.yahoo.com ESMTP
+[SMTP LOGIN REDACTED]
+MAIL FROM: <[REDACTED]@nytimes.com>
+250 ok
+RCPT TO: <[REDACTED]@[REDACTED].senate.gov>
+250 ok
+DATA
+354 go ahead
+Reply-To: <[REDACTED]@nytimes.com>
+From: "[REDACTED]" <[REDACTED]@nytimes.com>
+To: "[REDACTED]" <[REDACTED]@[REDACTED].senate.gov>
+Subject: RE: Just checking in
+Date: Fri, 1 Aug 2003 16:28:25 -0400
+Message-ID: [REDACTED]
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+boundary="----=_NextPart_000_0700_01C35849.EE94EC60"
+X-Priority: 3 (Normal)
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook IMO, Build 9.0.2416 (9.0.2911.0)
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1106
+Importance: Normal
+In-Reply-To: [REDACTED]
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0700_01C35849.EE94EC60
+Content-Type: text/plain;
+charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+
+i am going to gulfport mississippi for the story. am in las vegas now. will
+be in mississippi on sunday.
+the guy who is really good on this and helped me actually was [REDACTED]
+from uspirg. he put me in contact with a whistle blower.
+
+[REDACTED]
+-----Original Message-----
+From: [REDACTED] [mailto:[REDACTED]@[REDACTED].senate.gov]
+Sent: Friday, August 01, 2003 4:17 PM
+To: [REDACTED]@nytimes.com
+Subject: Just checking in
+
+
+
+                Performing an equivalent filtering with SplitCap takes 3 seconds (63 MB/s). That is 16 times faster than running Tshark!
+
